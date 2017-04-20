@@ -5,7 +5,7 @@ from .common import *
 
 class JobMS(object):
     """Class for communicating with metascheduler about Jobs"""
-    def __init__(self, job_id, status='', descriptor={}, input=[], output=[],
+    def __init__(self, job_id, status='', descriptor={}, output=[],
             api_url="http://localhost:5000/", from_api=False, debug={}):
         self.job_id = job_id
         self.job_url = os.path.join(
@@ -19,7 +19,6 @@ class JobMS(object):
         else:
             self.status = status
             self.descriptor = descriptor
-            self.input = input
             self.output = output
             self._debug = {}
 
@@ -28,7 +27,6 @@ class JobMS(object):
 
         self.status = result['status']
         self.descriptor = result['descriptor']
-        self.input = result['input']
         self.output = result['output']
 
 
