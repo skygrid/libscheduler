@@ -1,25 +1,30 @@
-from time import sleep
 from multiprocessing import Process
+from time import sleep
 
 from .api import Metascheduler
-from .common import MetaschedulerServerError
+
 
 class WorkerMS(object):
     """
     Class to run job_func on jobs from MS in parallel
     """
-    def __init__(self, api_url, queue_name, job_func, threads_num=2, sleep_time=10):
+    def __init__(
+            self,
+            api_url,
+            queue_name,
+            job_func,
+            threads_num=2,
+            sleep_time=10):
         self.ms = Metascheduler(api_url)
         self.queue = self.ms.queue(queue_name)
         self.sleep_time = sleep_time
         self.do_job = job_func
 
         self.cpu_avail = threads_num
-        self.cpus_per_job = {} # job_id -> needed_cpus
+        self.cpus_per_job = {}  # job_id -> needed_cpus
         self.processes = []
 
         self.running = False
-
 
     def start(self):
         self.running = True
@@ -42,7 +47,6 @@ class WorkerMS(object):
     def sleep(self):
         sleep(self.sleep_time)
 
-
     def cleanup_processes(self):
         processes_snapshot = self.processes[:]
         for p in processes_snapshot:
@@ -50,17 +54,14 @@ class WorkerMS(object):
                 self.processes.remove(p)
                 self.release_cpus(p.name)
 
-
     def acquire_cpus(self, process_name, ncpus):
         self.cpus_per_job[process_name] = ncpus
         self.cpu_avail -= ncpus
-
 
     def release_cpus(self, process_name):
         self.cpu_avail += self.cpus_per_job[process_name]
         self.cpus_per_job.pop(process_name, None)
         print "Released cpu, available: ", self.cpu_avail
-
 
     def run(self):
         while self.running:
@@ -83,7 +84,7 @@ class WorkerMS(object):
 
             self.acquire_cpus(
                 process_name,
-                job.descriptor.get('cpu_per_container') or 1
+                job.descriptor.get('container', {}).get('cpu_needed', 1)
             )
 
             p = Process(name=process_name, target=self.do_job, args=(job,))
