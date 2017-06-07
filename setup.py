@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='skygrid-libscheduler',
-    version='0.5.9',
+    version='0.5.10',
     url='https://github.com/skygrid/libscheduler',
     author='Alexander Baranov',
     author_email='sashab1@yandex-team.ru',

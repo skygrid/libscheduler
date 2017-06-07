@@ -55,6 +55,7 @@ class WorkerMS(object):
                 self.release_cpus(p.name)
 
     def acquire_cpus(self, process_name, ncpus):
+        ncpus = int(ncpus)
         self.cpus_per_job[process_name] = ncpus
         self.cpu_avail -= ncpus
 
