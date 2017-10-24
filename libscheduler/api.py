@@ -9,7 +9,7 @@ class Metascheduler(object):
         self.status_url = os.path.join(self.api_url, 'status')
         try:
             alive = ms_get(self.status_url)
-        except Exception, e:
+        except Exception as e:
             raise MetaschedulerServerError('Could not access Metascheduler on {}'.format(self.api_url))
 
     def queue(self, queue_name, **kwargs):
